@@ -44,6 +44,7 @@ class CartProvider with ChangeNotifier {
       return true;
     } catch (e) {
       print('Error adding to cart: $e');
+      setError('Failed to add product to cart');
       return false;
     }
   }
@@ -55,6 +56,7 @@ class CartProvider with ChangeNotifier {
       return true;
     } catch (e) {
       print('Error updating quantity: $e');
+      setError('Failed to update quantity');
       return false;
     }
   }
@@ -66,6 +68,7 @@ class CartProvider with ChangeNotifier {
       return true;
     } catch (e) {
       print('Error removing item: $e');
+      setError('Failed to remove item');
       return false;
     }
   }
@@ -78,18 +81,21 @@ class CartProvider with ChangeNotifier {
       return true;
     } catch (e) {
       print('Error clearing cart: $e');
+      setError('Failed to clear cart');
       return false;
     }
   }
 
   Future<bool> saveOrder() async {
     try {
-      // Simulate saving order (this would typically call an API)
-      await Future.delayed(Duration(seconds: 1));
-      await clearCart();
-      return true;
+      final result = await CartService.checkout();
+      if (result) {
+        await clearCart();
+      }
+      return result;
     } catch (e) {
       print('Error saving order: $e');
+      setError('Failed to checkout');
       return false;
     }
   }

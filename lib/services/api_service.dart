@@ -59,4 +59,54 @@ class ApiService {
       throw Exception('Network error: $e');
     }
   }
+
+  static Future<Map<String, dynamic>> put(String endpoint, Map<String, dynamic> data) async {
+    try {
+      final uri = Uri.parse('$baseUrl$endpoint');
+      print('Making PUT request to: $uri');
+      print('PUT data: $data');
+      
+      final response = await http.put(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(data),
+      ).timeout(Duration(seconds: 10));
+      
+      print('PUT Response status: ${response.statusCode}');
+      print('PUT Response body: ${response.body}');
+      
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to update data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('PUT API Error: $e');
+      throw Exception('Network error: $e');
+    }
+  }
+
+  static Future<bool> delete(String endpoint) async {
+    try {
+      final uri = Uri.parse('$baseUrl$endpoint');
+      print('Making DELETE request to: $uri');
+      
+      final response = await http.delete(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      ).timeout(Duration(seconds: 10));
+      
+      print('DELETE Response status: ${response.statusCode}');
+      print('DELETE Response body: ${response.body}');
+      
+      return response.statusCode == 200 || response.statusCode == 204;
+    } catch (e) {
+      print('DELETE API Error: $e');
+      throw Exception('Network error: $e');
+    }
+  }
 }
